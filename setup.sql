@@ -183,7 +183,7 @@ SELECT
 FROM enes2014.tblHomologa_2014 r
 LEFT JOIN Schools s ON r.Escola = s.school
 LEFT JOIN Exams e ON r.Exame = e.exam
-LEFT JOIN Courses c ON r.Curso = c.course
+LEFT JOIN Courses c ON r.Curso = c.course;
 
 INSERT INTO Results (schoolId, examId, courseId, yearId, phase, forApproval, isIntern, forImprovement, forAdmission, hasIntern, sex, age, cif, examClassification, cfd)
 SELECT
@@ -205,4 +205,31 @@ SELECT
 FROM enes2013.tblHomologa_2013 r
 LEFT JOIN Schools s ON r.Escola = s.school
 LEFT JOIN Exams e ON r.Exame = e.exam
-LEFT JOIN Courses c ON r.Curso = c.course
+LEFT JOIN Courses c ON r.Curso = c.course;
+
+CREATE TABLE SchoolResults (
+    examId INT REFERENCES Exams(examId),
+    schoolId INT REFERENCES Schools(schoolId),
+    yearId INT REFERENCES Years(yearId),
+    numStudents INTEGER,
+    numApproved INTEGER,
+    numIntern INTEGER,
+    numAdmission INTEGER,
+    numImprovement INTEGER,
+    avgClassification FLOAT
+);
+
+INSERT INTO SchoolResults (examId, schoolId, yearId, numStudents, numApproved, 
+                          numIntern, numAdmission, numImprovement, avgClassification)
+SELECT 
+    examId,
+    schoolId,
+    yearId,
+    COUNT(*) as numStudents,
+    SUM(CASE WHEN forApproval = 'S' THEN 1 ELSE 0 END) as numApproved,
+    SUM(CASE WHEN hasIntern = 'S' THEN 1 ELSE 0 END) as numIntern,
+    SUM(CASE WHEN forAdmission = 'S' THEN 1 ELSE 0 END) as numAdmission,
+    SUM(CASE WHEN forImprovement = 'S' THEN 1 ELSE 0 END) as numImprovement,
+    AVG(CAST(examClassification as FLOAT)) as avgClassification
+FROM Results
+GROUP BY examId, schoolId, yearId;
