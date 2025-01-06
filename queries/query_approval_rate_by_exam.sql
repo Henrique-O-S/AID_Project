@@ -1,5 +1,5 @@
 SELECT 
-    sr.yearId,
+    y.year,
     sr.examId,
     e.examDesc,
     SUM(sr.numStudents) AS totalParticipants,
@@ -9,7 +9,9 @@ FROM
     SchoolResults sr
 JOIN 
     Exams e ON sr.examId = e.examId
+JOIN 
+    Years y ON sr.yearId = y.yearId
 GROUP BY 
-    sr.yearId, sr.examId, e.examDesc
+    y.year, sr.examId, e.examDesc
 ORDER BY 
     approvalRate DESC;
