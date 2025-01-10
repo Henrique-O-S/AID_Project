@@ -1,5 +1,5 @@
 SELECT 
-    sr.yearId, 
+    y.year AS yearValue, 
     e.examDesc AS examName,
     s.name AS schoolName,
     d.name AS districtName,
@@ -12,6 +12,6 @@ JOIN
 JOIN 
     Districts d ON s.districtId = d.districtId
 JOIN 
-    Exams e ON sr.examId = e.examId;
-
-
+    Exams e ON sr.examId = e.examId
+JOIN 
+    Years y ON sr.yearId = y.yearId;
